@@ -16,10 +16,8 @@ class AuthController extends Controller
         if (Auth::check()) {
             if (Auth::user()->role == 'admin') {
                 return redirect('/admin')->with('message', 'berhasil login sebagai admin');
-
             } elseif (Auth::user()->role == 'user') {
                 return redirect('/attendance')->with('message', 'berhasil login sebagai user');
-                
             }
         } else {
             return view('auth.login')->with('message', 'gagal login');
