@@ -8,10 +8,53 @@
 
     <!-- Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('-translate-x-full');
+        }
+
+        // Fungsi untuk menampilkan notifikasi SweetAlert2
+        function showNotification(icon, title, message, timer = null) {
+            const config = {
+                icon: icon,
+                title: title,
+                html: message,
+                confirmButtonColor: '#667eea',
+                confirmButtonText: 'OK',
+                allowOutsideClick: false,
+                didOpen: function(modal) {
+                    const confirmButton = modal.querySelector('.swal2-confirm');
+                    if (confirmButton) {
+                        confirmButton.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                        confirmButton.style.borderRadius = '8px';
+                        confirmButton.style.padding = '10px 20px';
+                    }
+                }
+            };
+
+            if (timer) {
+                config.timer = timer;
+                config.timerProgressBar = true;
+            }
+
+            return Swal.fire(config);
+        }
+
+        // Fungsi untuk menampilkan notifikasi berhasil dengan loading
+        function showLoadingAlert(title, message) {
+            Swal.fire({
+                title: title,
+                html: message,
+                icon: 'info',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: (modal) => {
+                    Swal.showLoading();
+                }
+            });
         }
     </script>
     @livewireStyles
@@ -119,6 +162,73 @@
 
     </div>
     @livewireScripts
+
+    <!-- Global Notification Handler -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Handle Success Messages
+            @if (session('message'))
+                @if (str_contains(session('message'), 'berhasil') || str_contains(session('message'), 'Berhasil'))
+                    showNotification(
+                        'success',
+                        'Berhasil!',
+                        '{{ session('message') }}',
+                        3000
+                    );
+                @else
+                    showNotification(
+                        'info',
+                        'Informasi',
+                        '{{ session('message') }}'
+                    );
+                @endif
+            @endif
+
+            // Handle Error Messages
+            @if (session('error'))
+                showNotification(
+                    'error',
+                    'Error!',
+                    '{{ session('error') }}'
+                );
+            @endif
+
+            // Handle Validation Errors
+            @if ($errors->any())
+                const errors = {!! json_encode($errors->all()) !!};
+                showNotification(
+                    'error',
+                    'Validasi Gagal',
+                    errors.join('<br>')
+                );
+            @endif
+
+            // Handle Warning Messages
+            @if (session('warning'))
+                showNotification(
+                    'warning',
+                    'Peringatan',
+                    '{{ session('warning') }}'
+                );
+            @endif
+        });
+
+        // Custom Livewire Notification Handler
+        window.addEventListener('notify', function(event) {
+            const {
+                type = 'info', title = 'Notifikasi', message = ''
+            } = event.detail;
+            showNotification(type, title, message, type === 'success' ? 3000 : null);
+        });
+
+        // Custom Livewire Notification Handler with custom timer
+        window.addEventListener('notifyWithTimer', function(event) {
+            const {
+                type = 'info', title = 'Notifikasi', message = '', timer = 3000
+            } = event.detail;
+            showNotification(type, title, message, timer);
+        });
+    </script>
 </body>
 
 </html>

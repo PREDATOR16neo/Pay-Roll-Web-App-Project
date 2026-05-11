@@ -2,6 +2,7 @@
 
 namespace App\Livewire\User;
 
+use App\Traits\LivewireNotificationTrait;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Auth;
@@ -9,7 +10,7 @@ use Illuminate\Support\Facades\Storage;
 
 class Profile extends Component
 {
-    use WithFileUploads;
+    use WithFileUploads, LivewireNotificationTrait;
 
     public $photo;
     public $user;
@@ -28,9 +29,17 @@ class Profile extends Component
 
     public function uploadPhoto()
     {
-        $this->validate([
-            'photo' => 'required|image|max:2048',
-        ]);
+        $this->validate(
+            [
+                'photo' => 'required|image|max:2048|mimes:jpeg,png,jpg,gif',
+            ],
+            [
+                'photo.required' => 'Pilih file gambar terlebih dahulu',
+                'photo.image' => 'File harus berupa gambar',
+                'photo.max' => 'Ukuran gambar maksimal 2MB',
+                'photo.mimes' => 'Format gambar harus: jpeg, png, jpg, atau gif'
+            ]
+        );
 
         try {
             // Delete old photo if not default
@@ -49,11 +58,11 @@ class Profile extends Component
                 'profile_photo' => $filename
             ]);
 
-            session()->flash('success', '✅ Foto profil berhasil diubah!');
+            $this->successNotification('Berhasil!', 'Foto profil berhasil diubah');
             $this->reset('photo');
             $this->mount();
         } catch (\Exception $e) {
-            session()->flash('error', '❌ Gagal mengubah foto profil: ' . $e->getMessage());
+            $this->errorNotification('Gagal!', 'Terjadi kesalahan saat mengubah foto profil');
         }
     }
 }

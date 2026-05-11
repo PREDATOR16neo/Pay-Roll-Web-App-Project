@@ -13,6 +13,14 @@
         </div>
     @endif
 
+    @if ($errors->any())
+        <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded">
+            @foreach ($errors->all() as $error)
+                <p class="text-red-700 text-sm font-medium">{{ $error }}</p>
+            @endforeach
+        </div>
+    @endif
+
     <!-- Header -->
     <div class="bg-gradient-to-r from-blue-600 to-blue-800 rounded-lg shadow-lg p-6 text-white">
         <h1 class="text-3xl font-bold">📊 Manajemen Kehadiran</h1>
@@ -242,4 +250,4 @@
                 </div>
             </div>
         @endif
-    </div>
+</div>

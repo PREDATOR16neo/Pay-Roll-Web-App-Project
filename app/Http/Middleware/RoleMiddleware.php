@@ -22,7 +22,7 @@ class RoleMiddleware
         }
 
         if (Auth::user()->role != $role) {
-            abort(403, 'Akses Di Tolak Role Tidak Sesuai Dongok');
+            abort(403, 'Akses Di Tolak Role Tidak Sesuai');
         }
 
         return $next($request);

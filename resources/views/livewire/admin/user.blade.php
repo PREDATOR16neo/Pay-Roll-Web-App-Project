@@ -2,20 +2,6 @@
     <h1 class="text-3xl font-bold mb-2 text-gray-800">Halaman Pengguna</h1>
     <p class="text-gray-600 mb-6">Kelola data pengguna aplikasi</p>
 
-    @if ($errors->any())
-        <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded">
-            @foreach ($errors->all() as $error)
-                <p class="text-red-700 text-sm font-medium">{{ $error }}</p>
-            @endforeach
-        </div>
-    @endif
-
-    @if (session('message'))
-        <div class="mb-6 p-4 bg-green-50 border-l-4 border-green-500 rounded">
-            <p class="text-green-700 text-sm font-semibold">{{ session('message') }}</p>
-        </div>
-    @endif
-
     <form class="max-w-lg space-y-4 bg-white p-6 rounded-lg shadow-md mb-8" wire:submit.prevent='store'>
         <!-- User -->
         <div>
